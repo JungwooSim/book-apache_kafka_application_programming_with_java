@@ -17,3 +17,4 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/docker-file-share/kafka/home:/home
+#      - ~/docker-file-share/kafka/opt:/opt
