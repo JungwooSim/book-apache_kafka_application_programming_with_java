@@ -63,4 +63,63 @@ bin/kafka-topics.sh --bootstrap-server {ip}:{port} --describe --topic hello.kafk
 
 **토픽 옵션 수정**
 
-옵션을 변경하기 위해서는 [kafka-topics.sh](http://kafka-topics.sh) 또는 [kafka-configs.sh](http://kafka-configs.sh) 두개를 사용해야 한다.
+옵션을 변경하기 위해서는 [kafka-topics.sh](http://kafka-topics.sh) 또는 [kafka-configs.sh](http://kafka-configs.sh) 두개를 사용해야 한다.</br>
+파티션 개수를 수정하기 위해서는 [kafka-topics.sh](http://kafka-topics.sh) 를 사용해야 하고 토픽 삭제 정책인 리텐션 기간을 변경하기 위해서는 [kafka-configs.sh](http://kafka-configs.sh) 를 사용해야 한다.</br>
+이와 같이 토픽 설정 옵션이 파편화된 이유는 토픽에 대한 정보를 관리하는 일부 로직이 다른 명령어로 넘어갔기 때문이다.</br>
+추가로 토픽 옵션 중 다이나믹 토픽 옵션(dynamic topic config) 이라고 정의되는 일부 옵션들(log.segment,bytes, [log.retention.ms](http://log.retention.ms) 등)은 [kafka-configs.sh](http://kafka-configs.sh) 를 통해 수정할 수 있다.</br>
+
+```bash
+# 토픽 옵션 수정
+
+# alter 옵션과 partitions 옵션을 함께 사용하여 파티션 개수를 변경할 수 있다.
+bin/kafka-topics.sh --bootstrap-server localhost:9092 \
+--topic hello.kafka \
+--alter \
+--partitions 4
+
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic hello.kafka
+
+# retention.ms 옵션 추가 및 수정
+bin/kafka-configs.sh --bootstrap-server localhost:9092 \
+--entity-type topics \
+--entity-name hello.kafka \
+--alter --add-config retention.ms=86400000
+
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic hello.kafka
+```
+
+### kafka-console-producer.sh
+
+[kafka-console-producer.sh](http://kafka-console-producer.sh) 는 토픽에 데이터를 넣기 위해 사용한다.
+
+토픽에 넣는 데이터는 ‘레코드(record)’ 라고 부르며 메시지 키(key) 와 메시지 값(value) 으로 이루어져 있다. (키는 Optional 이다)
+
+```bash
+# hello.kafka 토픽에 레코드 추가하기 위해 kafka-console-producer.sh 실행 (key 없이 value 추가)
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic hello.kafka
+
+hello # key 없이 레코드 추가
+
+# hello.kafka 토픽에 레코드 추가하기 위해 kafka-console-producer.sh 실행 (key 포함 value 추가)
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic hello.kafka \
+--property "parse.key=true" \
+--property "key.separator=:" # 메시지와 키 값을 구분하는 구분자 선언 (선언하지 않을시 기본은 Tab delimiter(\t) 이다.)
+
+key1:no1 # key 를 설정하여 추가
+```
+주의할 점은 [kafka-console-producer.sh](http://kafka-console-producer.sh) 로 전송되는 레코드 값은 UTF-8 기반으로 Byte로 변환되고 ByteArraySerializer 로만 직렬화 된다는 점이다.</br>
+즉, String 이 아닌 타입으로는 직렬화하여 전송할 수 없다. 그러므로 텍스트 목적으로는 문자열만 전송할 수 있고, 다른 타입으로 직렬화하여 데이터를 브로커로 전송하고 싶다면 카프카 프로듀서 애플리케이션을 직접 개발해야 한다.
+
+<img src="/img/2.2.2-1.png" width="1000px;">
+
+<img src="/img/2.2.2-2.png" width="1000px;">
+
+메시지 키와 메시지 값을 함께 전송한 레코드는 토픽의 파티션에 저장된다.</br>
+메시지 키가 null 인 경우에는 프로듀서가 파티션으로 전송할 때 레코드 배치 단위(레코드 전송 묶음)로 라운드 로빈으로 전송한다.</br>
+메시지 키가 존재하는 경우에는 키의 해시값을 작성하여 존재하는 파티션 중 한 개에 할당된다. (메시지 키가 동일한 경우 동일한 파티션으로 전송)</br>
+(이는 프로듀서에서 설정된 파티셔너에 의해 결정되므로 커스텀한 프로듀셔에서는 이와 같이 동작하지 않을 수도 있다)
+
+> **파티션 개수가 늘어나면 새로 프로듀싱되는 레코드들은 어느 파티션으로 갈까?**
+메시지 키를 가진 레코드의 경우 파티션이 추가되면 파티션과 메시지 키의 일관성이 보장되지 않는다. (이전에 메시지 키가 파티션 0 번에 들어갔었다면 파티션을 늘린 뒤에는 파티션 0번으로 간다는 보장 없다)
+만약 파티션을 추가하더라도 이전에 사용하던 메시지 키의 일관성을 보장하고 싶다면 커스텀 파티셔너를 만들어야 한다. (챕터3에서 자세히 설명할 예정)
+>

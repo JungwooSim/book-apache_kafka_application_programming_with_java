@@ -1,4 +1,4 @@
-# 토픽 생성 및 조회
+## 토픽 생성 및 조회
 
 # 특정 서버의 카프카에 "hello" 라는 토픽 생성
 bin/kafka-topics.sh --create --bootstrap-server {ip}:{port} --topic hello.kafka
@@ -29,3 +29,35 @@ bin/kafka-topics.sh --bootstrap-server {ip}:{port} --describe --topic hello.kafk
 
 # Leader : 1001 브로커에 위치한다는 것을 의미
 # TIP : 리더 파티션이 일부 브로커에 몰려있는 경우 카프카 클러스터 부하가 특정 브로커들로 몰릴 수 있다.
+
+## 토픽 옵션 수정
+
+# alter 옵션과 partitions 옵션을 함께 사용하여 파티션 개수를 변경할 수 있다.
+bin/kafka-topics.sh --bootstrap-server localhost:9092 \
+--topic hello.kafka \
+--alter \
+--partitions 4
+
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic hello.kafka
+
+# retention.ms 옵션 추가 및 수정
+bin/kafka-configs.sh --bootstrap-server localhost:9092 \
+--entity-type topics \
+--entity-name hello.kafka \
+--alter --add-config retention.ms=86400000
+
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic hello.kafka
+
+## 프로듀서 명령어
+
+# hello.kafka 토픽에 레코드 추가하기 위해 kafka-console-producer.sh 실행 (key 없이 value 추가)
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic hello.kafka
+
+hello # key 없이 레코드 추가
+
+# hello.kafka 토픽에 레코드 추가하기 위해 kafka-console-producer.sh 실행 (key 포함 value 추가)
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic hello.kafka \
+--property "parse.key=true" \
+--property "key.separator=:" # 메시지와 키 값을 구분하는 구분자 선언 (선언하지 않을시 기본은 Tab delimiter(\t) 이다.)
+
+key1:no1 # key 를 설정하여 추가
