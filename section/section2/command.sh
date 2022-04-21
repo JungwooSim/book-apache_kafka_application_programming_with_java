@@ -61,3 +61,15 @@ bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic hello.ka
 --property "key.separator=:" # 메시지와 키 값을 구분하는 구분자 선언 (선언하지 않을시 기본은 Tab delimiter(\t) 이다.)
 
 key1:no1 # key 를 설정하여 추가
+
+## 컨슈머 명령어
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
+--topic hello.kafka \
+--from--beginning
+
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
+--topic hello.kafka \
+--property print.key=true \
+--property key.separator="-" \
+--group hello-group \
+--from-beginning

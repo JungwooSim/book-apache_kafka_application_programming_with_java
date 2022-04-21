@@ -119,7 +119,31 @@ key1:no1 # key 를 설정하여 추가
 메시지 키가 존재하는 경우에는 키의 해시값을 작성하여 존재하는 파티션 중 한 개에 할당된다. (메시지 키가 동일한 경우 동일한 파티션으로 전송)</br>
 (이는 프로듀서에서 설정된 파티셔너에 의해 결정되므로 커스텀한 프로듀셔에서는 이와 같이 동작하지 않을 수도 있다)
 
-> **파티션 개수가 늘어나면 새로 프로듀싱되는 레코드들은 어느 파티션으로 갈까?**
-메시지 키를 가진 레코드의 경우 파티션이 추가되면 파티션과 메시지 키의 일관성이 보장되지 않는다. (이전에 메시지 키가 파티션 0 번에 들어갔었다면 파티션을 늘린 뒤에는 파티션 0번으로 간다는 보장 없다)
+> **파티션 개수가 늘어나면 새로 프로듀싱되는 레코드들은 어느 파티션으로 갈까?**</br>
+메시지 키를 가진 레코드의 경우 파티션이 추가되면 파티션과 메시지 키의 일관성이 보장되지 않는다. (이전에 메시지 키가 파티션 0 번에 들어갔었다면 파티션을 늘린 뒤에는 파티션 0번으로 간다는 보장 없다)</br>
 만약 파티션을 추가하더라도 이전에 사용하던 메시지 키의 일관성을 보장하고 싶다면 커스텀 파티셔너를 만들어야 한다. (챕터3에서 자세히 설명할 예정)
 >
+
+### kafka-console-consumer.sh
+
+프로듀서를 통해 적재한 데이터는 [kafka-console-consumer.sh](http://kafka-console-consumer.sh) 명령어로 확인할 수 있다.
+
+```bash
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
+--topic hello.kafka \
+--from--beginning
+
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
+--topic hello.kafka \
+--property print.key=true \ # message key 를 확인하기 위한 설정
+--property key.separator="-" \ # message key 와 value 를 구분하기 위해 구분값 설정 (디폴트는 tab delimieter(\t))
+--group hello-group \ consumer group 생성 
+--from-beginning
+```
+
+`--group` 옵션을 통해 신규 컨슈머 그룹을 생성할 수 있다. 컨슈머 그룹은 한개 이상의 컨슈머로 이루어져 있다.
+
+컨슈머 그룹을 통해 가져간 토픽의 메시지는 가져간 메시지에 대해 커밋을 한다.</br>
+커밋이란 컨슈머가 특정 레코드까지 처리를 완료했다고 레코드의 오프셋 번호를 카프카 브로커에 저장하는 것이다. (커밋 정보는 __consumer_offsets 이름의 내부 노픽에 저장된다)</br>
+
+<img src="/img/2.2.3-1.png" width="1000px;">
