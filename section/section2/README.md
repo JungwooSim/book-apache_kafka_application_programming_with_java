@@ -147,3 +147,42 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
 커밋이란 컨슈머가 특정 레코드까지 처리를 완료했다고 레코드의 오프셋 번호를 카프카 브로커에 저장하는 것이다. (커밋 정보는 __consumer_offsets 이름의 내부 노픽에 저장된다)</br>
 
 <img src="/img/2.2.3-1.png" width="1000px;">
+
+### kafka-consumer-groups.sh
+
+위에서 [kafka-console-consumer.sh](http://kafka-console-consumer.sh) 명령어를 통해 hello-group 이름의 컨슈머 그룹으로 데이터를 가져갔다. 이를 확인 가능하다.</br>
+컨슈머 그룹의 상세 정보를 확인하는 것은 컨슈머를 개발하거나, 카프카를 운영할 때 중요하게 활용된다.
+
+```bash
+# 생성된 컨슈머 그룹 내역
+bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list hello-group
+
+bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+--group hello-group \
+--describe
+```
+
+<img src="/img/2.2.4-1.png" width="1000px;">
+
+- GROUP, TOPIC, PARTITION : 조회한 컨슈머 그룹이 마지막으로 커밋한 토픽과 파티션을 나타낸다
+- CURRENT-OFFSET : 컨슈머 그룹이 가져간 토픽의 파티션에 가장 최신 offset 이 몇 번인지 나타낸다.
+- LOG-END-OFFSET : 해당 컨슈머 그룹의 컨슈머가 어느 오프셋까지 커밋했는지 알 수 있다.
+- LAG : 컨슈머 그룹이 토픽의 파티션에 있는 데이터를 가져가는데에 얼마나 지연이 발생하는지 나타내는 지표이다.
+- CONSUMER-ID : 컨슈머의 토픽(파티션) 할당을 카프카 내부적으로 구분하기 위해 사용하는 id 이다. (이 값은 client id 에 uuid 값을 붙여서 자동 할당되어 유니크한 값으로 설정된다)
+- HOST : 컨슈머가 동작하는 host 명을 출력한다. ( 이 값을 통해 카프카에 붙은 컨슈머의 호스트명 또는 IP 를 알 수 있다)
+- CLIENT-ID : 컨슈머에 할당된 id 이다. 이 값은 사용자가 지정할 수 있으며 지정하지 않으면 자동 생성된다.
+
+### kafka-verifiable-producer, consumer.sh
+
+kafka-verifiable 로 시작하는 2개의 스크립트를 사용하면 String 타입 메시지 값을 코드 없이 주고 받을 수 있다.</br>
+카프카 클러스터 설치가 완료된 이후에 토픽에 데이터를 전송하여 간단한 네트워크 통신 테스트를 할 때 유용하다.
+
+```bash
+bin/kafka-verifiable-producer.sh --bootstrap-server localhost:9092 \
+--max-message 10 \ # 데이터 개수를 지정할 수 있다. (-1 은 종료될떄까지 계속)
+--topic verify-test # 데이터를 받을 대상 토픽
+
+bin/kafka-verifiable-consumer.sh --bootstrap-server localhost:9092 \
+--topic verify-test \ # 데이터를 가져오고자 하는 토픽 설정
+--group-id test-group # 컨슈머 그룹 설정
+```
