@@ -186,3 +186,15 @@ bin/kafka-verifiable-consumer.sh --bootstrap-server localhost:9092 \
 --topic verify-test \ # 데이터를 가져오고자 하는 토픽 설정
 --group-id test-group # 컨슈머 그룹 설정
 ```
+
+### kafka-delete-records.sh
+
+이미 적재된 토픽의 데이터를 지울때 사용된다.</br>
+이미 적재된 토픽의 데이터 중 가장 오래된 데이터(가장 낮은 숫자의 오프셋)부터 특정 시점의 오프셋까지 삭제할 수 있다.</br>
+주의할 점은 토픽의 특정 레코드 하나만 삭제되는 것이 아니라 파티션에 존재하는 가장 오래된 오프셋부터 지정한 오프셋까지 삭제 된다.</br>
+카프카에서는 토픽의 파티션에 저장된 특정 데이터만 삭제 할 수 없다.</br>
+
+```bash
+bin/kafka-delete-records.sh --bootstrap-server localhost:9092 \
+--offset-json-file delete-topic.json
+```
