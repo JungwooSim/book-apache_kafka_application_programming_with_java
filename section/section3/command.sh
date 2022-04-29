@@ -6,3 +6,5 @@ bin/kafka-topics.sh --bootstrap-server localhost:9092 --create \
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
 --topic test \
 --from-beginning testMessage
+
+bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic test
