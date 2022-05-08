@@ -353,3 +353,16 @@ GlobalKTable 은 co-partitioning 되지 않은 KStream 과 데이터 조인을 �
 가능한 이유는 KTable 과 다르게 GloablKTable 로 정의된 데이터를 스트림즈 애플리케이션의 모든 태스크에 동일하게 공유되어 사용되기 때문이다.</br>
 하지만 단점은 각 태스크마다 GlobalKTable 로 정의된 모든 데이터를 저장하고 사용하기 때문에 스트림즈 애플리케이션의 로컬 스토리지의 사용량이 증가하고 네트워크, 브로커에 부하가 생긴다.</br>
 그러므로 되도록이면 GlobalKTalbe 은 작은 용량의 데이터일 경우에만 사용하는 것이 좋다.</br>
+
+### 스트림즈DSL 주요 옵션
+
+필수 옵션
+
+- bootstrap.servers
+- application.id
+
+선택 옵션
+
+- default.key.serde : 레코드의 메시지 키를 직렬화, 역직렬화하는 클래스를 지정 (기본값 : 바이트 직렬화)
+- num.stream.threads : 스트림 프로세싱 실행 시 실행될 스레드 개수를 지정 (기본값 : 1)
+- state.dir : 상태기반 데이터 처리를 할 때 데이터를 저장할 디렉토리 지정 (기본값 : tmp/kafka-streams)
