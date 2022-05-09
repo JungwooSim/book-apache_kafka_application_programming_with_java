@@ -366,3 +366,8 @@ GlobalKTable 은 co-partitioning 되지 않은 KStream 과 데이터 조인을 �
 - default.key.serde : 레코드의 메시지 키를 직렬화, 역직렬화하는 클래스를 지정 (기본값 : 바이트 직렬화)
 - num.stream.threads : 스트림 프로세싱 실행 시 실행될 스레드 개수를 지정 (기본값 : 1)
 - state.dir : 상태기반 데이터 처리를 할 때 데이터를 저장할 디렉토리 지정 (기본값 : tmp/kafka-streams)
+
+### 프로세서 API
+
+스트림즈DSL 은 데이터 처리, 분기, 조인을 위한 다양한 메서드들을 제공하지만 추가적인 상세 로직의 구현이 필요하다면 프로세서 API 를 활용할 수 있다.</br>
+프로세서 API 에서는 스트림즈DSL 에서 사용했던 KStream, KTable, GlobalKTable 개념이 없다는 점을 주의하면 된다.</br>
