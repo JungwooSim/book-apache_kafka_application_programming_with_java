@@ -71,3 +71,6 @@ bin/connect-distributed.sh config/connect-distributed.properties
 # 현재 커넥트에서 사용가능한 플러그인 조회
 curl -X GET http://localhost:8083/connector-plugins
 
+# 커넥터 리스트 확인
+curl -X GET http://localhost:8083/connectors
+
