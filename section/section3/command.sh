@@ -60,3 +60,14 @@ bin/kafka-topics.sh --create \
 --bootstrap-server localhost:9092 \
 --partitions 2 \
 --topic address_v2
+
+# 단일 모드 커넥트 실행
+bin/connect-standalone.sh config/connect-standalone.properties \
+config/connect-file-source.properties
+
+# 분산 모드 커넥트 실행
+bin/connect-distributed.sh config/connect-distributed.properties
+
+# 현재 커넥트에서 사용가능한 플러그인 조회
+curl -X GET http://localhost:8083/connector-plugins
+
