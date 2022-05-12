@@ -74,3 +74,5 @@ curl -X GET http://localhost:8083/connector-plugins
 # 커넥터 리스트 확인
 curl -X GET http://localhost:8083/connectors
 
+# 미러메이커2 실행
+bin/connect-mirror-maker.sh config/connect-mirror-maker.properties
