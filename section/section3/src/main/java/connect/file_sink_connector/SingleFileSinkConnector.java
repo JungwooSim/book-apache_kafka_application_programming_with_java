@@ -1,9 +1,9 @@
-package connect.fileconnect;
+package connect.file_sink_connector;
 
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.connect.connector.Task;
-import org.apache.kafka.connect.source.SourceConnector;
+import org.apache.kafka.connect.sink.SinkConnector;
 
 import java.net.ConnectException;
 import java.util.ArrayList;
@@ -11,19 +11,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SingleFileSourceConnector extends SourceConnector {
+public class SingleFileSinkConnector extends SinkConnector {
+
     private Map<String, String> configProperties;
 
     @Override
     public String version() {
-        return "1,0";
+        return "1.0";
     }
 
     @Override
     public void start(Map<String, String> props) {
         this.configProperties = props;
+
         try {
-            new SingleFileSourceConnectorConfig(props);
+            new SingleFileSinkConnectorConfig(props);
         } catch (ConfigException e) {
             try {
                 throw new ConnectException(e.getMessage());
@@ -35,7 +37,7 @@ public class SingleFileSourceConnector extends SourceConnector {
 
     @Override
     public Class<? extends Task> taskClass() {
-        return SingleFileSourceTask.class;
+        return SingleFileSinkTask.class;
     }
 
     @Override
@@ -43,8 +45,7 @@ public class SingleFileSourceConnector extends SourceConnector {
         List<Map<String, String>> taskConfigs = new ArrayList<>();
         Map<String, String> taskProps = new HashMap<>();
         taskProps.putAll(configProperties);
-
-        for (int i = 0; i < maxTasks; i++) {
+        for (int i = 0 ; i < maxTasks; i++) {
             taskConfigs.add(taskProps);
         }
 
@@ -53,11 +54,10 @@ public class SingleFileSourceConnector extends SourceConnector {
 
     @Override
     public ConfigDef config() {
-        return SingleFileSourceConnectorConfig.CONFIG;
+        return SingleFileSinkConnectorConfig.CONFIG;
     }
 
     @Override
     public void stop() {
-
     }
 }

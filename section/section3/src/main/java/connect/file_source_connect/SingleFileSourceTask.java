@@ -1,4 +1,4 @@
-package connect.fileconnect;
+package connect.file_source_connect;
 
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.source.SourceRecord;
