@@ -129,3 +129,21 @@ acks 를 all 설정으로 운영할 경우에만 min.insync.replicas 설정이 �
 - REST API 프로듀서 애플리케이션 개발
 - 하둡 적재 컨슈머 애플리케이션 개발
 - 엘라스틱서치 싱크 커넥터 개발
+
+**로컬 하둡, 엘라스틱서치, 키바나 설치**
+
+```jsx
+brew install hadoop elasticsearch kibana
+```
+
+**토픽 생성**
+
+```jsx
+./bin/kafka-topics.sh --create \
+--bootstrap-server localhost:9092 \
+--replication-factor 2 \
+--partitions 3 \
+--topic select-color
+```
+
+그외 실습은 책 참고…
