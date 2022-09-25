@@ -65,7 +65,7 @@ key1:no1 # key 를 설정하여 추가
 ## 컨슈머 명령어
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
 --topic hello.kafka \
---from--beginning
+--from-beginning
 
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
 --topic hello.kafka \
