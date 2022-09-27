@@ -73,3 +73,9 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
 --property key.separator="-" \
 --group hello-group \
 --from-beginning
+
+# 컨슈머 상태와 오프셋 확인
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group console-consumer-54159 --describe
+
+# 토픽 삭제
+./bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic hello.kafka
